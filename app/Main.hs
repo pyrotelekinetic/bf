@@ -1,3 +1,6 @@
+import Parser
+--import IR
+
 data Tape a = Tape [a] a [a]
 
 curElem :: Tape a -> a
