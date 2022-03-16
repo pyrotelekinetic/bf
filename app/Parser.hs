@@ -56,11 +56,22 @@ reduce (x : xs) = case x of
 	(n, StepL) -> MovIR (-n) : reduce xs
 	(n, In) -> replicate n InpIR ++ reduce xs
 	(n, Out) -> replicate n OutIR ++ reduce xs
+	(n, LoopO) -> LopIR (reduce a) : reduce b
+		where
+		(a, b) = getLoop xs
+	(n, LoopC) -> reduce xs
 
-condense' :: [IR] -> [IR]
-condense' [] = []
-condense' (ModIR x : ModIR y : is) = condense' (ModIR (x + y) : is)
-condense' (MovIR x : MovIR y : is) = condense' (MovIR (x + y) : is)
-condense' (i : is) = i : condense' is
+getLoop :: [(Int, Instruction)] -> ([(Int, Instruction)], [(Int, Instruction)])
+getLoop [] = ([], [])
+getLoop (x : xs) = case x of
+	(1, LoopC) -> ([], xs)
+	(n, LoopC) -> ([], (n - 1, LoopC) : xs)
+	y -> (\(a, (b, c)) -> (a : b, c)) (y, getLoop xs)
 
-runParse = condense' . reduce . condense . clearNoop . (map $ parse)
+reduceMore :: [IR] -> [IR]
+reduceMore [] = []
+reduceMore (ModIR x : ModIR y : is) = reduceMore (ModIR (x + y) : is)
+reduceMore (MovIR x : MovIR y : is) = reduceMore (MovIR (x + y) : is)
+reduceMore (i : is) = i : reduceMore is
+
+runParse = reduceMore . reduce . condense . clearNoop . (map $ parse)
