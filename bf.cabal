@@ -60,13 +60,16 @@ executable bf
     -- other-extensions:
     default-extensions:
         LambdaCase
+        OverloadedStrings
     ghc-options:
         -Wno-tabs
         -threaded
 
     -- Other library packages from which modules are imported.
     build-depends:
-        base ^>=4.14.3.0
+        base ^>=4.14.3.0,
+        text,
+        megaparsec
 
     -- Directories containing source files.
     hs-source-dirs: app

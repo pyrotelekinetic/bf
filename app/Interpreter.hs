@@ -61,3 +61,23 @@ exec t (i : is) = case i of
 		_ -> do
 			t' <- exec t x
 			exec t' (i : is)
+
+execDebug :: Tape -> [IR] -> IO Tape
+execDebug t [] = do
+	print t
+	putStrLn "[]"
+	pure t
+execDebug t (i : is) = (putStrLn $ show t ++ "\t" ++ show (i : is)) >> case i of
+	ModIR n -> exec (modElem (+ n) t) is
+	MovIR n -> exec (shiftTape n t) is
+	InpIR -> do
+		o <- getChar
+		exec (setElem (toEnum . ord $ o) t) is
+	OutIR -> do
+		putChar $ chr . fromIntegral $ getElem t
+		exec t is
+	LopIR x -> case getElem t of
+		0 -> exec t is
+		_ -> do
+			t' <- exec t x
+			exec t' (i : is)
