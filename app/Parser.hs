@@ -9,77 +9,77 @@ import Text.Megaparsec.Char (char)
 type Parser a = Parsec Void Text a
 
 data Instruction
-	= Inc
-	| Dec
-	| StepR
-	| StepL
-	| In
-	| Out
-	| Loop [Instruction]
-	| Noop
-	deriving (Show, Eq)
+  = Inc
+  | Dec
+  | StepR
+  | StepL
+  | In
+  | Out
+  | Loop [Instruction]
+  | Noop
+  deriving (Show, Eq)
 
 data IR
-	= ModIR Word8
-	| MovIR Int
-	| InpIR
-	| OutIR
-	| LopIR [IR]
-	deriving Show
+  = ModIR Word8
+  | MovIR Int
+  | InpIR
+  | OutIR
+  | LopIR [IR]
+  deriving Show
 
 plusP :: Parser Instruction
 plusP = do
-	char '+'
-	pure Inc
+  char '+'
+  pure Inc
 
 minusP :: Parser Instruction
 minusP = do
-	char '-'
-	pure Dec
+  char '-'
+  pure Dec
 
 rightP :: Parser Instruction
 rightP = do
-	char '>'
-	pure StepR
+  char '>'
+  pure StepR
 
 leftP :: Parser Instruction
 leftP = do
-	char '<'
-	pure StepL
+  char '<'
+  pure StepL
 
 inP :: Parser Instruction
 inP = do
-	char ','
-	pure In
+  char ','
+  pure In
 
 outP :: Parser Instruction
 outP = do
-	char '.'
-	pure Out
+  char '.'
+  pure Out
 
 noopP :: Parser Instruction
 noopP = do
-	anySingleBut ']'
-	pure Noop
+  anySingleBut ']'
+  pure Noop
 
 instructionP :: Parser Instruction
 instructionP = choice
-	[ plusP
-	, minusP
-	, rightP
-	, leftP
-	, inP
-	, outP
-	, loopP
-	, try noopP
-	]
+  [ plusP
+  , minusP
+  , rightP
+  , leftP
+  , inP
+  , outP
+  , loopP
+  , try noopP
+  ]
 
 loopP :: Parser Instruction
 loopP = do
-	char '['
-	x <- many instructionP
-	char ']'
-	pure $ Loop x
+  char '['
+  x <- many instructionP
+  char ']'
+  pure $ Loop x
 
 instructionSP :: Parser [Instruction]
 instructionSP = many instructionP
@@ -87,20 +87,20 @@ instructionSP = many instructionP
 clearNoop :: [Instruction] -> [Instruction]
 clearNoop []  = []
 clearNoop (i : is) = case i of
-	Loop x -> Loop (clearNoop x) : clearNoop is
-	Noop -> clearNoop is
-	x -> x : clearNoop is
+  Loop x -> Loop (clearNoop x) : clearNoop is
+  Noop -> clearNoop is
+  x -> x : clearNoop is
 
 parseIR :: [Instruction] -> [IR]
 parseIR [] = []
 parseIR (i : is) = case i of
-	Inc -> ModIR 1 : parseIR is
-	Dec -> ModIR (255) : parseIR is
-	StepR -> MovIR 1 : parseIR is
-	StepL  -> MovIR  (-1) : parseIR is
-	In -> InpIR : parseIR is
-	Out -> OutIR : parseIR is
-	Loop x -> LopIR (parseIR x) : parseIR is
+  Inc -> ModIR 1 : parseIR is
+  Dec -> ModIR (255) : parseIR is
+  StepR -> MovIR 1 : parseIR is
+  StepL  -> MovIR  (-1) : parseIR is
+  In -> InpIR : parseIR is
+  Out -> OutIR : parseIR is
+  Loop x -> LopIR (parseIR x) : parseIR is
 
 reduce :: [IR] -> [IR]
 reduce [] = []

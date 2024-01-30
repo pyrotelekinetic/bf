@@ -62,7 +62,6 @@ executable bf
         LambdaCase
         OverloadedStrings
     ghc-options:
-        -Wno-tabs
         -threaded
 
     -- Other library packages from which modules are imported.
