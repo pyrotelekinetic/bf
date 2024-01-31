@@ -17,7 +17,7 @@ setElem :: a -> Zipper a -> Zipper a
 setElem o (Zipper q _ p) = Zipper q o p
 
 modElem :: (a -> a) -> Zipper a -> Zipper a
-modElem f (Zipper q o p) = setElem (f o) $ Zipper q o p
+modElem f (Zipper q o p) = Zipper q (f o) p
 
 goLeft :: Tape -> Tape
 goLeft (Zipper (y : left) x right) = Zipper left y (x : right)
