@@ -19,24 +19,24 @@ setElem o (Zipper q _ p) = Zipper q o p
 modElem :: (a -> a) -> Zipper a -> Zipper a
 modElem f (Zipper q o p) = setElem (f o) $ Zipper q o p
 
-goLeft :: Zipper a -> Zipper a
+goLeft :: Tape -> Tape
 goLeft (Zipper (y : left) x right) = Zipper left y (x : right)
 goLeft (Zipper [] _ _) = undefined -- Should be an error
 
-goRight :: Zipper a -> Zipper a
+goRight :: Tape -> Tape
 goRight (Zipper left x (y : right)) = Zipper (x : left) y right
-goRight (Zipper _ _ []) = undefined -- Should add more cells
+goRight (Zipper left x []) = Zipper (x : left) 0 []
 
-shiftTape :: Int -> Zipper a -> Zipper a
+shiftTape :: Int -> Tape -> Tape
 shiftTape 0 a = a
 shiftTape n z
   | n > 0 = r n z
   | otherwise = l n z
     where
-    r :: Int -> Zipper a -> Zipper a
+    r :: Int -> Tape -> Tape
     r 0 a = a
     r n t = r (n - 1) $ goRight t
-    l :: Int -> Zipper a -> Zipper a
+    l :: Int -> Tape -> Tape
     l 0 a = a
     l n t = l (n + 1) $ goLeft t
 
