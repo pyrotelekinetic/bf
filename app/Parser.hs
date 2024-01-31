@@ -95,12 +95,13 @@ parseIR :: [Instruction] -> [IR]
 parseIR [] = []
 parseIR (i : is) = case i of
   Inc -> ModIR 1 : parseIR is
-  Dec -> ModIR (255) : parseIR is
+  Dec -> ModIR 255 : parseIR is
   StepR -> MovIR 1 : parseIR is
   StepL  -> MovIR  (-1) : parseIR is
   In -> InpIR : parseIR is
   Out -> OutIR : parseIR is
   Loop x -> LopIR (parseIR x) : parseIR is
+  Noop -> parseIR is
 
 reduce :: [IR] -> [IR]
 reduce [] = []
@@ -113,4 +114,5 @@ unwrap :: Maybe [a] -> [a]
 unwrap Nothing = []
 unwrap (Just a) = a
 
+runParse :: Text -> [IR]
 runParse a = reduce . parseIR . clearNoop $ unwrap $ parseMaybe instructionSP a

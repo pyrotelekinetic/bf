@@ -21,20 +21,21 @@ modElem f (Zipper q o p) = setElem (f o) $ Zipper q o p
 
 goLeft :: Zipper a -> Zipper a
 goLeft (Zipper (y : left) x right) = Zipper left y (x : right)
+goLeft (Zipper [] _ _) = undefined -- Should be an error
 
 goRight :: Zipper a -> Zipper a
 goRight (Zipper left x (y : right)) = Zipper (x : left) y right
+goRight (Zipper _ _ []) = undefined -- Should add more cells
 
 shiftTape :: Int -> Zipper a -> Zipper a
 shiftTape 0 a = a
 shiftTape n z
   | n > 0 = r n z
-  | n < 0 = l n z
+  | otherwise = l n z
     where
     r :: Int -> Zipper a -> Zipper a
     r 0 a = a
     r n t = r (n - 1) $ goRight t
-
     l :: Int -> Zipper a -> Zipper a
     l 0 a = a
     l n t = l (n + 1) $ goLeft t
@@ -67,7 +68,7 @@ execDebug t [] = do
   print t
   putStrLn "[]"
   pure t
-execDebug t (i : is) = (putStrLn $ show t ++ "\t" ++ show (i : is)) >> case i of
+execDebug t (i : is) = putStrLn (show t ++ "\t" ++ show (i : is)) >> case i of
   ModIR n -> exec (modElem (+ n) t) is
   MovIR n -> exec (shiftTape n t) is
   InpIR -> do
