@@ -16,8 +16,8 @@ getElem (Zipper _ o _) = o
 setElem :: a -> Zipper a -> Zipper a
 setElem o (Zipper q _ p) = Zipper q o p
 
-modElem :: (a -> a) -> Zipper a -> Zipper a
-modElem f (Zipper q o p) = Zipper q (f o) p
+modify :: (a -> a) -> Zipper a -> Zipper a
+modify f (Zipper q o p) = Zipper q (f $! o) p
 
 goLeft :: Tape -> Tape
 goLeft (Zipper (y : left) x right) = Zipper left y (x : right)
@@ -49,7 +49,7 @@ tape = Zipper [] 5 (5 : 65 : replicate 7 0)
 exec :: Tape -> [IR] -> IO Tape
 exec t [] = pure t
 exec t (i : is) = case i of
-  ModIR n -> exec (modElem (+ n) t) is
+  ModIR n -> exec (modify (+ n) t) is
   MovIR n -> exec (shiftTape n t) is
   InpIR -> do
     o <- getChar
@@ -69,7 +69,7 @@ execDebug t [] = do
   putStrLn "[]"
   pure t
 execDebug t (i : is) = putStrLn (show t ++ "\t" ++ show (i : is)) >> case i of
-  ModIR n -> exec (modElem (+ n) t) is
+  ModIR n -> exec (modify (+ n) t) is
   MovIR n -> exec (shiftTape n t) is
   InpIR -> do
     o <- getChar
