@@ -40,11 +40,8 @@ shiftTape n z
     l 0 a = a
     l n t = l (n + 1) $ goLeft t
 
-initTape :: Int -> Tape
-initTape n = Zipper [] 0 (replicate (n - 1) 0)
-
-tape :: Tape
-tape = Zipper [] 5 (5 : 65 : replicate 7 0)
+empty :: Tape
+empty = Zipper [] 0 []
 
 exec :: Tape -> [IR] -> IO Tape
 exec t [] = pure t

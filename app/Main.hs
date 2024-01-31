@@ -4,10 +4,10 @@ import Interpreter
 import Data.Text (Text)
 
 runCode :: Text -> IO Tape
-runCode = exec (initTape 10) . runParse
+runCode = exec empty . runParse
 
 runDebug :: Text -> IO Tape
-runDebug = execDebug (initTape 10) . runParse
+runDebug = execDebug empty . runParse
 
 main :: IO ()
 main = putStrLn "noerr"
