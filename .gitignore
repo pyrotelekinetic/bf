@@ -2,3 +2,6 @@ result
 result-*
 
 dist-newstyle
+
+# Sample bf code (for testing)
+*.bf
