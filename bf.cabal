@@ -8,9 +8,9 @@ category:           Language
 license:            GPL-3.0-or-later
 license-file:       LICENSE
 
-author:             Carter "pyrotelekinetic" Ison
-maintainer:         carter@isons.org
-copyright:          (C) 2022, 2024  Carter "pyrotelekinetic" Ison <carter@isons.org>
+author:             Clover "pyrotelekinetic" Ison
+maintainer:         clover@isons.org
+copyright:          (C) 2022, 2024  Clover "pyrotelekinetic" Ison <clover@isons.org>
 
 extra-doc-files:    README.md
 
